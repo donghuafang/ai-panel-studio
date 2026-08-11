@@ -203,6 +203,12 @@ class DiscussionOrchestrator:
             })
 
         except Exception as e:
+            db.rollback()
+            try:
+                discussion.status = "error"
+                db.commit()
+            except Exception:
+                pass  # Best-effort: DB may be unavailable
             self._broadcast(discussion_id, "error", {"code": "ORCHESTRATION_ERROR", "message": str(e)})
         finally:
             db.close()
@@ -273,54 +279,57 @@ class DiscussionOrchestrator:
             raw = "\n".join(lines)
 
         import json as _json
-        result = _json.loads(raw)
+        try:
+            result = _json.loads(raw)
 
-        # 名字到 ID 的映射
-        name_to_id = {g.name: g.id for g in guests}
+            # 名字到 ID 的映射
+            name_to_id = {g.name: g.id for g in guests}
 
-        # 保存共识
-        for c in result.get("consensus_list", []):
-            supporter_ids = [name_to_id.get(n, "") for n in c.get("supporter_names", [])]
-            supporter_ids = [sid for sid in supporter_ids if sid]
-            consensus = Consensus(
-                discussion_id=discussion_id,
-                content=c["content"],
-                supporter_guest_ids=supporter_ids,
-            )
-            db.add(consensus)
-            db.commit()
-            db.refresh(consensus)
-            self._broadcast(discussion_id, "consensus_updated", {
-                "consensus": {
-                    "id": consensus.id, "discussion_id": consensus.discussion_id,
-                    "content": consensus.content, "supporter_guest_ids": consensus.supporter_guest_ids,
-                    "created_at": consensus.created_at.isoformat(), "updated_at": consensus.updated_at.isoformat(),
-                }
-            })
+            # 保存共识
+            for c in result.get("consensus_list", []):
+                supporter_ids = [name_to_id.get(n, "") for n in c.get("supporter_names", [])]
+                supporter_ids = [sid for sid in supporter_ids if sid]
+                consensus = Consensus(
+                    discussion_id=discussion_id,
+                    content=c["content"],
+                    supporter_guest_ids=supporter_ids,
+                )
+                db.add(consensus)
+                db.commit()
+                db.refresh(consensus)
+                self._broadcast(discussion_id, "consensus_updated", {
+                    "consensus": {
+                        "id": consensus.id, "discussion_id": consensus.discussion_id,
+                        "content": consensus.content, "supporter_guest_ids": consensus.supporter_guest_ids,
+                        "created_at": consensus.created_at.isoformat(), "updated_at": consensus.updated_at.isoformat(),
+                    }
+                })
 
-        # 保存分歧
-        for d in result.get("divergence_list", []):
-            opposing_pairs = []
-            for pair in d.get("opposing_names", []):
-                id_pair = [name_to_id.get(n, "") for n in pair]
-                id_pair = [i for i in id_pair if i]
-                if len(id_pair) == 2:
-                    opposing_pairs.append(id_pair)
-            divergence = Divergence(
-                discussion_id=discussion_id,
-                content=d["content"],
-                opposing_pairs=opposing_pairs,
-            )
-            db.add(divergence)
-            db.commit()
-            db.refresh(divergence)
-            self._broadcast(discussion_id, "divergence_updated", {
-                "divergence": {
-                    "id": divergence.id, "discussion_id": divergence.discussion_id,
-                    "content": divergence.content, "opposing_pairs": divergence.opposing_pairs,
-                    "created_at": divergence.created_at.isoformat(), "updated_at": divergence.updated_at.isoformat(),
-                }
-            })
+            # 保存分歧
+            for d in result.get("divergence_list", []):
+                opposing_pairs = []
+                for pair in d.get("opposing_names", []):
+                    id_pair = [name_to_id.get(n, "") for n in pair]
+                    id_pair = [i for i in id_pair if i]
+                    if len(id_pair) == 2:
+                        opposing_pairs.append(id_pair)
+                divergence = Divergence(
+                    discussion_id=discussion_id,
+                    content=d["content"],
+                    opposing_pairs=opposing_pairs,
+                )
+                db.add(divergence)
+                db.commit()
+                db.refresh(divergence)
+                self._broadcast(discussion_id, "divergence_updated", {
+                    "divergence": {
+                        "id": divergence.id, "discussion_id": divergence.discussion_id,
+                        "content": divergence.content, "opposing_pairs": divergence.opposing_pairs,
+                        "created_at": divergence.created_at.isoformat(), "updated_at": divergence.updated_at.isoformat(),
+                    }
+                })
+        except Exception:
+            pass  # Summary generation is best-effort; discussion still ends
 
 
 # 全局单例

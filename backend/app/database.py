@@ -3,11 +3,21 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 
 from backend.app.config import settings
 
+from sqlalchemy import event
+
 engine = create_engine(
     settings.DATABASE_URL,
     connect_args={"check_same_thread": False},  # SQLite 需要
     echo=False,
 )
+
+
+@event.listens_for(engine, "connect")
+def _set_sqlite_pragma(dbapi_connection, connection_record):
+    cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA foreign_keys = ON")
+    cursor.close()
+
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

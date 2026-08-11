@@ -51,6 +51,8 @@ def confirm_discussion(db: Session, discussion_id: str) -> Discussion:
         raise ValueError("讨论不存在")
     if discussion.status != "pending":
         raise ValueError(f"讨论状态为 '{discussion.status}'，无法确认")
+    if not discussion.guests:
+        raise ValueError("请先生成嘉宾阵容")
     # 回填 host_id
     host = next((g for g in discussion.guests if g.role == "host"), None)
     if host:

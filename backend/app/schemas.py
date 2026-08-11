@@ -134,3 +134,6 @@ class ErrorEvent(BaseModel):
 
 class GenerateGuestsResponse(BaseModel):
     guests: list[GuestResponse]
+
+
+DiscussionDetailResponse.model_rebuild()

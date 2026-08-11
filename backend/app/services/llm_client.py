@@ -1,6 +1,6 @@
 import json
 import httpx
-from backend.app.config import settings
+from app.config import settings
 
 SYSTEM_PROMPT_GENERATE_GUESTS = """你是一个圆桌讨论的策划者。用户会提供一个讨论话题和需要的专家人数，请你设计一个AI嘉宾阵容。
 

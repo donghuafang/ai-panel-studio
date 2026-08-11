@@ -2,16 +2,16 @@ import threading
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from backend.app.database import get_db
-from backend.app.schemas import (
+from app.database import get_db
+from app.schemas import (
     DiscussionCreate,
     DiscussionResponse,
     DiscussionListResponse,
     DiscussionDetailResponse,
     StatusResponse,
 )
-from backend.app.services import discussion_service
-from backend.app.services.orchestration_service import orchestrator
+from app.services import discussion_service
+from app.services.orchestration_service import orchestrator
 
 router = APIRouter(prefix="/api/discussions", tags=["discussions"])
 
@@ -47,7 +47,7 @@ def confirm_discussion(discussion_id: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail=str(e))
 
     # 启动后台编排
-    from backend.app.database import SessionLocal
+    from app.database import SessionLocal
     thread = threading.Thread(
         target=orchestrator.run_discussion,
         args=(SessionLocal, discussion_id),

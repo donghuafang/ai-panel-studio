@@ -3,8 +3,8 @@ import json
 import threading
 from datetime import datetime, timezone
 
-from backend.app.models import Discussion, Guest, Speech, Consensus, Divergence
-from backend.app.services.llm_client import LLMClient
+from app.models import Discussion, Guest, Speech, Consensus, Divergence
+from app.services.llm_client import LLMClient
 
 
 class DiscussionOrchestrator:

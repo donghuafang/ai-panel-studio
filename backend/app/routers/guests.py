@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from backend.app.database import get_db
-from backend.app.schemas import GuestResponse, GenerateGuestsResponse
-from backend.app.services.llm_client import LLMClient
-from backend.app.services import guest_service
+from app.database import get_db
+from app.schemas import GuestResponse, GenerateGuestsResponse
+from app.services.llm_client import LLMClient
+from app.services import guest_service
 
 router = APIRouter(prefix="/api/discussions", tags=["guests"])
 

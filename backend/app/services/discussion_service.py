@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session, joinedload
 
-from backend.app.models import Discussion
-from backend.app.schemas import DiscussionCreate
+from app.models import Discussion
+from app.schemas import DiscussionCreate
 
 
 def create_discussion(db: Session, data: DiscussionCreate) -> Discussion:

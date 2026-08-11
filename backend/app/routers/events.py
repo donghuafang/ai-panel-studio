@@ -5,10 +5,10 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from sse_starlette.sse import EventSourceResponse
 
-from backend.app.database import get_db
-from backend.app.models import Consensus, Divergence
-from backend.app.schemas import ConsensusResponse, DivergenceResponse
-from backend.app.services.orchestration_service import orchestrator
+from app.database import get_db
+from app.models import Consensus, Divergence
+from app.schemas import ConsensusResponse, DivergenceResponse
+from app.services.orchestration_service import orchestrator
 
 router = APIRouter(prefix="/api/discussions", tags=["events"])
 

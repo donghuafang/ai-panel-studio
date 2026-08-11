@@ -3,8 +3,8 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from backend.app.database import init_db
-from backend.app.routers import discussions, guests, events
+from app.database import init_db
+from app.routers import discussions, guests, events
 
 
 @asynccontextmanager

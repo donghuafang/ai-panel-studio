@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
-from backend.app.models import Discussion, Guest
-from backend.app.services.llm_client import LLMClient
+from app.models import Discussion, Guest
+from app.services.llm_client import LLMClient
 
 
 async def generate_guests_for_discussion(

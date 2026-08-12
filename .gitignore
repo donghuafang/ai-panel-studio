@@ -1,1 +1,44 @@
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Superpowers (dev tooling)
 .superpowers/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+dist/
+*.db
+.env
+*.db-journal
+venv/
+.venv/
+
+# Coverage
+htmlcov/
+.coverage
+.pytest_cache/
+
+# Node
+node_modules/
+frontend/dist/
+
+# Screenshots (except for README)
+backend/tests/screenshots/*.png
+!backend/tests/screenshots/studio_desktop_1280x720.png
+
+# Logs
+*.log
+
+# Temp files
+~$*
+*.tmp

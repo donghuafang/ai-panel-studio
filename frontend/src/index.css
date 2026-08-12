@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+
+@layer base {
+  body {
+    @apply bg-studio-bg text-gray-200 font-sans antialiased;
+    min-height: 100vh;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0A0E27;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #1E2756;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #2A3478;
+  }
+}
+
+@layer components {
+  .spotlight-bg {
+    background: radial-gradient(ellipse at center, rgba(0, 212, 255, 0.06) 0%, transparent 70%);
+    background-size: 200% 200%;
+    animation: spotlight 8s ease-in-out infinite;
+  }
+}

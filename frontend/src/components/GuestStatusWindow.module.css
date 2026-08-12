@@ -1,0 +1,30 @@
+.container {
+  --guest-color: #6B7280;
+}
+
+.breatheBorder {
+  box-shadow: 0 0 4px var(--guest-color);
+  animation: breathe 2s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%, 100% {
+    box-shadow: 0 0 4px var(--guest-color);
+  }
+  50% {
+    box-shadow: 0 0 16px var(--guest-color), 0 0 32px var(--guest-color);
+  }
+}
+
+.pulseAvatar {
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}

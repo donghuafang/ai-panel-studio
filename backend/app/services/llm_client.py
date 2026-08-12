@@ -1,3 +1,4 @@
+import os
 import json
 import httpx
 from app.config import settings
@@ -32,6 +33,11 @@ class LLMClient:
         self.api_key = settings.DEEPSEEK_API_KEY
         self.base_url = settings.DEEPSEEK_BASE_URL.rstrip("/")
         self.model = "deepseek-chat"  # Deepseek V4 Pro
+        # Mock mode if env var set OR no API key configured
+        self.mock_mode = (
+            os.environ.get("MOCK_LLM", "").lower() == "true"
+            or not self.api_key  # 没有 API key 时自动进入 mock 模式
+        )
 
     @property
     def _headers(self) -> dict:
@@ -44,6 +50,10 @@ class LLMClient:
         self, messages: list[dict], temperature: float = 0.8
     ) -> str:
         """发送聊天补全请求，返回 assistant 文本回复"""
+        if self.mock_mode:
+            from app.services.mock_llm_responses import mock_chat_completion
+            return mock_chat_completion(messages, temperature)
+
         payload = {
             "model": self.model,
             "messages": messages,
@@ -62,6 +72,10 @@ class LLMClient:
 
     async def generate_guests(self, topic: str, expert_count: int) -> list[dict]:
         """生成 1 位主持人 + N 位专家"""
+        if self.mock_mode:
+            from app.services.mock_llm_responses import mock_generate_guests
+            return mock_generate_guests(topic, expert_count)
+
         user_message = f"讨论话题：{topic}\n专家人数：{expert_count}"
         messages = [
             {"role": "system", "content": SYSTEM_PROMPT_GENERATE_GUESTS},
@@ -86,6 +100,12 @@ class LLMClient:
         speech_purpose: str,
     ) -> str:
         """为指定嘉宾生成发言内容"""
+        if self.mock_mode:
+            from app.services.mock_llm_responses import mock_generate_speech
+            return mock_generate_speech(
+                guest_name, guest_stance, role, discussion_context, speech_purpose
+            )
+
         system_prompt = f"""你正在参加一场AI圆桌讨论。你的身份是：
 
 姓名：{guest_name}

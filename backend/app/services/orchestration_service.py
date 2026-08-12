@@ -58,6 +58,9 @@ class DiscussionOrchestrator:
         """在后台线程中运行全自动讨论（同步数据库操作）"""
         import time
 
+        # 给前端 SSE 连接留出时间（避免所有事件在订阅前广播完毕）
+        time.sleep(1.0)
+
         llm = LLMClient()
         db = session_factory()
 
